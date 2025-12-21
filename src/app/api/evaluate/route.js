@@ -100,6 +100,7 @@ function getRateLimitIdentifier(userId, req) {
 
 // Delimiter for batching test cases (using a unique separator)
 const TEST_DELIMITER = "|||TEST_SEPARATOR|||";
+// All languages now have common library imports included
 
 const LANGUAGE_CONFIG = {
   javascript: {
@@ -119,13 +120,22 @@ for (const input of inputs) {
 `,
     filename: "solution.js",
   },
+  
   python: {
     language: "python",
     version: "3.10.0",
     wrapperTemplate: (code) => `
-${code}
-
 import sys
+import math
+import re
+import collections
+import itertools
+import functools
+from collections import Counter, defaultdict, deque
+from itertools import permutations, combinations, accumulate
+from functools import reduce, lru_cache
+
+${code}
 
 delimiter = "${TEST_DELIMITER}"
 all_inputs = sys.argv[1] if len(sys.argv) > 1 else ""
@@ -137,17 +147,23 @@ for input_data in inputs:
 `,
     filename: "solution.py",
   },
+  
   java: {
     language: "java",
     version: "15.0.2",
     wrapperTemplate: (code) => `
+import java.util.*;
+import java.util.stream.*;
+import java.util.regex.*;
+import java.math.*;
+
 public class Solution {
     ${code}
     
     public static void main(String[] args) {
         String delimiter = "${TEST_DELIMITER}";
         String allInputs = args.length > 0 ? args[0] : "";
-        String[] inputs = allInputs.split(java.util.regex.Pattern.quote(delimiter));
+        String[] inputs = allInputs.split(Pattern.quote(delimiter));
         
         for (String input : inputs) {
             System.out.println(solve(input));
@@ -157,6 +173,7 @@ public class Solution {
 `,
     filename: "Solution.java",
   },
+  
   cpp: {
     language: "cpp",
     version: "10.2.0",
@@ -166,6 +183,16 @@ public class Solution {
 #include <sstream>
 #include <algorithm>
 #include <vector>
+#include <map>
+#include <set>
+#include <queue>
+#include <stack>
+#include <deque>
+#include <cmath>
+#include <climits>
+#include <cstring>
+#include <numeric>
+#include <functional>
 using namespace std;
 
 ${code}
@@ -197,6 +224,7 @@ int main(int argc, char* argv[]) {
 `,
     filename: "solution.cpp",
   },
+  
   c: {
     language: "c",
     version: "10.2.0",
@@ -205,21 +233,51 @@ int main(int argc, char* argv[]) {
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
+#include <limits.h>
+#include <stdbool.h>
 
 ${code}
 
 int main(int argc, char* argv[]) {
     const char* delimiter = "${TEST_DELIMITER}";
-    char* all_inputs = argc > 1 ? strdup(argv[1]) : strdup("");
-    char* input = strtok(all_inputs, delimiter);
+    char* all_inputs = argc > 1 ? argv[1] : "";
     
-    while (input != NULL) {
-        char* result = solve(input);
+    size_t delim_len = strlen(delimiter);
+    char* current = all_inputs;
+    char* next;
+    
+    while (current != NULL && *current != '\\0') {
+        // Find next delimiter
+        next = strstr(current, delimiter);
+        
+        // Extract current input
+        size_t input_len;
+        if (next != NULL) {
+            input_len = next - current;
+        } else {
+            input_len = strlen(current);
+        }
+        
+        // Create a copy of the input for solve()
+        char* input_copy = (char*)malloc(input_len + 1);
+        strncpy(input_copy, current, input_len);
+        input_copy[input_len] = '\\0';
+        
+        // Call solve and print result
+        char* result = solve(input_copy);
         printf("%s\\n", result);
-        input = strtok(NULL, delimiter);
+        
+        free(input_copy);
+        
+        // Move to next input
+        if (next != NULL) {
+            current = next + delim_len;
+        } else {
+            break;
+        }
     }
     
-    free(all_inputs);
     return 0;
 }
 `,

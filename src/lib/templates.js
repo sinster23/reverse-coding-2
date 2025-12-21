@@ -1,3 +1,5 @@
+// lib/templates.js - Updated C template for challenge 3
+
 const CODE_TEMPLATES = {
   1: {
     // Challenge 1: Mystery Sum (Single Integer Input)
@@ -57,8 +59,8 @@ const CODE_TEMPLATES = {
 }`,
   },
 
-    2: {
-    // Challenge 3: Number Transformer (Single Integer Input)
+  2: {
+    // Challenge 2: Number Transformer (Single Integer Input)
     javascript: `function solve(input) {
   // input: a string containing a single integer (e.g., "6")
   // output: return result as a string
@@ -116,7 +118,7 @@ const CODE_TEMPLATES = {
   },
 
   3: {
-    // Challenge 2: Array Mystery (Space-Separated Integers)
+    // Challenge 3: Array Mystery (Space-Separated Integers)
     javascript: `function solve(input) {
   // input: space-separated integers (e.g., "3 1 4 2 5")
   // output: return result as a string
@@ -175,7 +177,11 @@ const CODE_TEMPLATES = {
     
     int arr[100];
     int count = 0;
-    char* token = strtok(input, " ");
+    
+    // Parse input - make a copy to avoid modifying original
+    char temp[1000];
+    strcpy(temp, input);
+    char* token = strtok(temp, " ");
     while (token != NULL) {
         arr[count++] = atoi(token);
         token = strtok(NULL, " ");
