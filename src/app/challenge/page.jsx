@@ -516,12 +516,6 @@ export default function ChallengePage() {
       <p className="text-cyan-300 text-xs mb-6 text-center leading-relaxed">
         Congratulations! You've successfully completed all {challenges.length} challenges!
       </p>
-      <button
-        onClick={() => setShowCompletionModal(false)}
-        className="w-full bg-cyan-600 border-2 border-cyan-400 text-black px-6 py-3 pixel-font text-xs hover:bg-cyan-500 transition-all"
-      >
-        CLOSE
-      </button>
     </div>
   </div>
 )}
