@@ -15,7 +15,8 @@ export default function ChallengePage() {
   const [rateLimitMessage, setRateLimitMessage] = useState(null);
   const [rateLimitRemaining, setRateLimitRemaining] = useState(8);
   const [cooldownTimer, setCooldownTimer] = useState(0);
-  const [localCooldown, setLocalCooldown] = useState(0); // NEW: Frontend cooldown
+  const [localCooldown, setLocalCooldown] = useState(0); 
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
   const router = useRouter();
 
   const FRONTEND_COOLDOWN_SECONDS = 5; // Configurable cooldown duration
@@ -59,6 +60,12 @@ export default function ChallengePage() {
       return () => clearInterval(interval);
     }
   }, [localCooldown]);
+
+  useEffect(() => {
+  if (completedStages.length === challenges.length && completedStages.length > 0) {
+    setShowCompletionModal(true);
+  }
+}, [completedStages]);
 
   const currentChallenge = challenges[currentStage];
 
@@ -499,6 +506,25 @@ export default function ChallengePage() {
           </div>
         </div>
       </div>
+      {/* Completion Modal */}
+{showCompletionModal && (
+  <div className="fixed inset-0 bg-black/60 bg-opacity-90 flex items-center justify-center z-50 pixel-font">
+    <div className="border-4 border-cyan-400 bg-black p-8 max-w-md pixel-border">
+      <h2 className="text-cyan-400 text-xl mb-4 text-center glow-cyan">
+         QUEST.COMPLETE! 
+      </h2>
+      <p className="text-cyan-300 text-xs mb-6 text-center leading-relaxed">
+        Congratulations! You've successfully completed all {challenges.length} challenges!
+      </p>
+      <button
+        onClick={() => setShowCompletionModal(false)}
+        className="w-full bg-cyan-600 border-2 border-cyan-400 text-black px-6 py-3 pixel-font text-xs hover:bg-cyan-500 transition-all"
+      >
+        CLOSE
+      </button>
+    </div>
+  </div>
+)}
     </div>
   );
 }
